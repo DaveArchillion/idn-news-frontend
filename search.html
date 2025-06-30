@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hasil Pencarian - IDN News</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+  <nav class="navbar">
+    <!-- Baris 1 -->
+    <div class="top-row">
+      <a href="index.html" class="brand">IDN News</a>
+      <div class="auth-links">
+        <a href="login.html">Login</a>
+        <a href="register.html">Register</a>
+      </div>
+    </div>
+
+    <div class="scrolling-categories">
+      <a href="kategori.html?cat=Politics&page=1">Politics</a>
+      <a href="kategori.html?cat=Sports&page=1">Sports</a>
+      <a href="kategori.html?cat=Health&page=1">Health</a>
+      <a href="kategori.html?cat=Investment&page=1">Investment</a>
+      <a href="kategori.html?cat=Games&page=1">Games</a>
+      <a href="kategori.html?cat=F%26B&page=1">F&B</a>
+      <a href="kategori-list.html">Kategori</a>
+      <a href="trending.html">Trending</a>
+    </div>
+
+    <form class="search-row" action="search.html" method="GET">
+      <input type="text" name="q" placeholder="Cari berita..." required>
+      <button type="submit">Cari</button>
+    </form>
+  </nav>
+
+  <div style="padding: 20px;">
+    <h2>Hasil Pencarian</h2>
+  </div>
+
+  <div class="grid-container" id="hasil-pencarian">Memuat...</div>
+
+  <footer>
+    &copy; 2025 IDN News
+  </footer>
+
+  <script>
+    const keyword = new URLSearchParams(window.location.search).get("q");
+
+    fetch(`http://localhost:3000/api/news/search?q=${keyword}`)
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById("hasil-pencarian");
+
+        if (!Array.isArray(data) || data.length === 0) {
+          container.innerHTML = "<p style='padding:20px;'>Tidak ada hasil pencarian.</p>";
+          return;
+        }
+
+        container.innerHTML = "";
+
+        data.forEach(item => {
+          const tanggal = new Date(item.created_at).toLocaleDateString("id-ID", {
+            day: 'numeric', month: 'long', year: 'numeric'
+          });
+
+          const card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML = `
+            <img src="http://localhost:3000/images/${item.image}" alt="${item.title}">
+            <h3><a href="detail.html?id=${item.id}">${item.title}</a></h3>
+            <small>${tanggal}</small>
+            <p>${item.content.slice(0, 100)}...</p>
+          `;
+          container.appendChild(card);
+        });
+      })
+      .catch(() => {
+        document.getElementById("hasil-pencarian").innerHTML = "<p style='padding:20px;'>Gagal memuat hasil pencarian.</p>";
+      });
+  </script>
+
+</body>
+</html>

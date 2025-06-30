@@ -1,0 +1,347 @@
+* {
+  box-sizing: border-box;
+}
+html {
+  font-size: 16px;
+  line-height: 1.5;
+}
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f5f5f5;
+}
+
+.navbar {
+  background-color: #d00000;
+  color: white;
+  padding: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+.navbar .top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.navbar .brand {
+  font-weight: bold;
+  font-size: 18px;
+  color: white;
+  text-decoration: none;
+}
+.navbar .auth-links a {
+  margin-left: 10px;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+.scrolling-categories {
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 5px 0;
+}
+.scrolling-categories a {
+  display: inline-block;
+  margin: 0 10px;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+.search-row {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0;
+}
+.search-row input {
+  flex: 1;
+  padding: 6px;
+  border-radius: 4px;
+  border: none;
+}
+.search-row button {
+  padding: 6px 12px;
+  background: white;
+  color: #d00000;
+  border: none;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 20px;
+  gap: 20px;
+}
+.berita-terbaru {
+  flex: 3;
+}
+.trending {
+  flex: 1;
+  background: white;
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  height: fit-content;
+}
+.trending .item {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+.trending img {
+  width: 80px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.highlight-utama {
+  position: relative;
+  margin-bottom: 30px;
+  overflow: hidden;
+}
+.highlight-utama img {
+  width: 100%;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  border-radius: 6px;
+}
+.highlight-utama .overlay {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  padding: 20px;
+  border-radius: 0 0 6px 6px;
+}
+
+.kategori-section {
+  margin-bottom: 40px;
+}
+.kategori-section h3 {
+  margin-left: 5px;
+}
+.kategori-grid,
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+  padding: 0 20px 20px;
+}
+.card {
+  background: white;
+  border-radius: 6px;
+  padding: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+.card img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 4px;
+}
+.card a {
+  text-decoration: none;
+  font-weight: bold;
+  color: black;
+}
+.card small {
+  display: block;
+  color: gray;
+  margin: 5px 0;
+}
+
+.pagination {
+  text-align: center;
+  margin: 30px;
+}
+.page-link {
+  display: inline-block;
+  padding: 8px 12px;
+  margin: 0 5px;
+  background: white;
+  border: 1px solid #ccc;
+  color: black;
+  border-radius: 4px;
+  text-decoration: none;
+}
+.page-link.active,
+.page-link:hover {
+  background-color: red;
+  color: white;
+}
+
+.detail-container {
+  max-width: 800px;
+  margin: 40px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+.detail-container img {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.komentar {
+  margin-top: 40px;
+}
+.komentar form input,
+.komentar form textarea {
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+.komentar form button {
+  padding: 8px 20px;
+  background-color: #d00000;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.komentar form button:hover {
+  background-color: #a00000;
+}
+.komentar-item {
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+.komentar-item small {
+  color: gray;
+}
+
+.auth-container {
+  max-width: 400px;
+  margin: 60px auto;
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  text-align: center;
+}
+.auth-container h2 {
+  margin-bottom: 20px;
+}
+.auth-container input,
+.auth-container button {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+.auth-container button {
+  background-color: #d00000;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.auth-container button:hover {
+  background-color: #a00000;
+}
+.auth-footer {
+  margin-top: 10px;
+}
+.auth-footer p {
+  margin-bottom: 5px;
+}
+.btn-secondary {
+  display: inline-block;
+  padding: 8px 20px;
+  background-color: #ccc;
+  color: black;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: bold;
+}
+.btn-secondary:hover {
+  background-color: #bbb;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  background: #222;
+  color: white;
+  margin-top: 40px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    padding: 10px;
+  }
+  .kategori-grid,
+  .grid-container {
+    grid-template-columns: 1fr !important;
+  }
+  .trending {
+    margin-top: 20px;
+    width: 100%;
+  }
+  .highlight-utama .overlay h2 {
+    font-size: 18px;
+  }
+  .highlight-utama .overlay p {
+    font-size: 14px;
+  }
+  .card h3 {
+    font-size: 16px;
+  }
+  footer {
+    font-size: 14px;
+    padding: 15px;
+  }
+}
+
+.dashboard-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding: 20px;
+}
+
+.dashboard-form input,
+.dashboard-form select,
+.dashboard-form textarea {
+  width: 100%;
+  max-width: 500px;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.btn-danger {
+  background: #d00000;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.btn-edit {
+  background: #007bff;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Detail Berita - IDN News</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <style>
+    .meta a {
+      text-decoration: none;
+      color: #d00000;
+      font-weight: bold;
+    }
+    .meta a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="top-row">
+      <a href="index.html" class="brand">IDN News</a>
+      <div class="auth-links">
+        <a href="login.html">Login</a>
+        <a href="register.html">Register</a>
+      </div>
+    </div>
+
+    <div class="scrolling-categories">
+      <a href="kategori.html?cat=Politics&page=1">Politics</a>
+      <a href="kategori.html?cat=Sports&page=1">Sports</a>
+      <a href="kategori.html?cat=Health&page=1">Health</a>
+      <a href="kategori.html?cat=Investment&page=1">Investment</a>
+      <a href="kategori.html?cat=Games&page=1">Games</a>
+      <a href="kategori.html?cat=F%26B&page=1">F&B</a>
+      <a href="kategori-list.html">Kategori</a>
+      <a href="trending.html">Trending</a>
+    </div>
+
+    <form class="search-row" action="search.html" method="GET">
+      <input type="text" name="q" placeholder="Cari berita..." required>
+      <button type="submit">Cari</button>
+    </form>
+  </nav>
+
+  <div class="detail-container" id="berita-detail">Memuat...</div>
+
+  <div class="detail-container komentar">
+    <h3>Tinggalkan Komentar</h3>
+    <form id="form-komentar">
+      <input type="text" id="nama" placeholder="Nama" required />
+      <textarea id="pesan" placeholder="Komentar..." required></textarea>
+      <button type="submit">Kirim</button>
+    </form>
+
+    <h3>Komentar</h3>
+    <div id="list-komentar">Memuat komentar...</div>
+  </div>
+
+  <footer>
+    &copy; 2025 IDN News
+  </footer>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+
+    // Tampilkan detail berita
+    fetch(`http://localhost:3000/api/news/${id}`)
+      .then(res => res.json())
+      .then(berita => {
+        const el = document.getElementById("berita-detail");
+
+        if (berita.error) {
+          el.innerHTML = "<p>Berita tidak ditemukan.</p>";
+        } else {
+          el.innerHTML = `
+            <img src="http://localhost:3000/images/${berita.image}" alt="${berita.title}">
+            <h2>${berita.title}</h2>
+            <div class="meta">
+              Ditulis oleh <a href="author.html?id=${berita.user_id}">${berita.author}</a> |
+              ${berita.created_at} |
+              <a href="kategori.html?cat=${encodeURIComponent(berita.category)}">${berita.category}</a> |
+              ${berita.views} views
+            </div>
+            <p>${berita.content}</p>
+          `;
+        }
+      })
+      .catch(() => {
+        document.getElementById("berita-detail").innerHTML = "<p>Gagal memuat berita.</p>";
+      });
+
+    function loadKomentar() {
+      fetch(`http://localhost:3000/api/comments/${id}`)
+        .then(res => res.json())
+        .then(data => {
+          const list = document.getElementById("list-komentar");
+          if (!Array.isArray(data) || data.length === 0) {
+            list.innerHTML = "<p>Belum ada komentar.</p>";
+          } else {
+            list.innerHTML = data.map(k => `
+              <div class="komentar-item">
+                <strong>${k.name}</strong><br>
+                <small>${new Date(k.createdAt).toLocaleString()}</small>
+                <p>${k.message}</p>
+              </div>
+            `).join("");
+          }
+        })
+        .catch(() => {
+          document.getElementById("list-komentar").innerHTML = "<p>Gagal memuat komentar.</p>";
+        });
+    }
+
+    loadKomentar();
+
+    document.getElementById("form-komentar").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const nama = document.getElementById("nama").value;
+      const pesan = document.getElementById("pesan").value;
+
+      fetch("http://localhost:3000/api/comments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ newsId: id, name: nama, message: pesan })
+      })
+      .then(res => res.json())
+      .then(() => {
+        document.getElementById("form-komentar").reset();
+        loadKomentar();
+      })
+      .catch(() => {
+        alert("Gagal mengirim komentar.");
+      });
+    });
+  </script>
+
+</body>
+</html>

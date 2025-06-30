@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Berita oleh Penulis - IDN News</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+  <nav class="navbar">
+    <!-- Baris 1: Logo + Login/Register -->
+    <div class="top-row">
+      <a href="index.html" class="brand">IDN News</a>
+      <div class="auth-links">
+        <a href="login.html">Login</a>
+        <a href="register.html">Register</a>
+      </div>
+    </div>
+
+    <div class="scrolling-categories">
+      <a href="kategori.html?cat=Politics&page=1">Politics</a>
+      <a href="kategori.html?cat=Sports&page=1">Sports</a>
+      <a href="kategori.html?cat=Health&page=1">Health</a>
+      <a href="kategori.html?cat=Investment&page=1">Investment</a>
+      <a href="kategori.html?cat=Games&page=1">Games</a>
+      <a href="kategori.html?cat=F&B&page=1">F&B</a>
+      <a href="kategori-list.html">Kategori</a>
+      <a href="trending.html">Trending</a>
+    </div>
+
+    <form class="search-row" action="search.html" method="GET">
+      <input type="text" name="q" placeholder="Cari berita..." required>
+      <button type="submit">Cari</button>
+    </form>
+  </nav>
+
+  <section class="author-section">
+    <h2 id="judul">Berita oleh Penulis</h2>
+    <div class="grid-container" id="list-berita">Memuat...</div>
+  </section>
+
+  <footer>
+    &copy; 2025 IDN News
+  </footer>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const userId = params.get("id");
+
+    if (!userId) {
+      document.getElementById("list-berita").innerHTML = "<p>User ID tidak ditemukan.</p>";
+      throw new Error("User ID diperlukan.");
+    }
+
+    fetch(`http://localhost:3000/api/news/by-author/${userId}`)
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById("list-berita");
+        const judul = document.getElementById("judul");
+
+        if (!Array.isArray(data) || data.length === 0) {
+          container.innerHTML = "<p style='padding:20px;'>Tidak ada berita dari penulis ini.</p>";
+          return;
+        }
+
+        judul.innerText = `Berita oleh: ${data[0].author}`;
+        container.innerHTML = "";
+
+        data.forEach(berita => {
+          const tanggal = new Date(berita.created_at).toLocaleDateString("id-ID", {
+            day: "numeric", month: "long", year: "numeric"
+          });
+
+          const card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML = `
+            <img src="http://localhost:3000/images/${berita.image}" alt="${berita.title}">
+            <h3><a href="detail.html?id=${berita.id}">${berita.title}</a></h3>
+            <small>${tanggal} | <a href="kategori.html?cat=${encodeURIComponent(berita.category)}">${berita.category}</a></small>
+            <p>${berita.content.slice(0, 100)}...</p>
+          `;
+          container.appendChild(card);
+        });
+      })
+      .catch(() => {
+        document.getElementById("list-berita").innerHTML = "<p style='padding:20px;'>Gagal memuat berita penulis.</p>";
+      });
+  </script>
+
+</body>
+</html>

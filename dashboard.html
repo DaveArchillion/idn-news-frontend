@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard Admin - IDN News</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="top-row">
+      <a href="index.html" class="brand">IDN News</a>
+      <div class="auth-links">
+        <span style="color:white;font-weight:bold;">Admin</span>
+        <button onclick="logout()" class="btn-secondary" style="margin-left: 10px;">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="dashboard-panel">
+
+      <section class="card dashboard-form">
+        <h2>Tambah Berita</h2>
+        <form id="newsForm" class="form-grid">
+          <input type="text" id="title" placeholder="Judul Berita" required />
+          <select id="category" required>
+            <option value="">Pilih Kategori</option>
+            <option value="Politics">Politics</option>
+            <option value="Sports">Sports</option>
+            <option value="Health">Health</option>
+            <option value="Investment">Investment</option>
+            <option value="Games">Games</option>
+            <option value="F&B">F&B</option>
+          </select>
+          <textarea id="content" placeholder="Konten berita..." rows="5" required></textarea>
+          <input type="file" id="image" required />
+          <button type="submit">Tambah Berita</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Daftar Berita</h2>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Judul</th>
+                <th>Kategori</th>
+                <th>Gambar</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="berita-list">
+              <tr><td colspan="4">Memuat...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer>&copy; 2025 IDN News</footer>
+
+  <script>
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Anda belum login!");
+      location.href = "login.html";
+    }
+
+    function logout() {
+      localStorage.removeItem("token");
+      alert("Logout berhasil.");
+      location.href = "login.html";
+    }
+
+    fetch("http://localhost:3000/api/admin/news", {
+      headers: { Authorization: "Bearer " + token }
+    })
+    .then(res => res.json())
+    .then(data => {
+      const tbody = document.getElementById("berita-list");
+      tbody.innerHTML = "";
+      if (!Array.isArray(data)) {
+        tbody.innerHTML = "<tr><td colspan='4'>Gagal memuat berita.</td></tr>";
+        return;
+      }
+
+      data.forEach(item => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${item.title}</td>
+          <td>${item.category}</td>
+          <td><img src="../public/images/${item.image}" width="80" /></td>
+          <td>
+            <button class="btn-danger" onclick="hapus(${item.id})">Hapus</button>
+            <button class="btn-edit" onclick="edit(${item.id})">Edit</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    });
+
+    function hapus(id) {
+      if (!confirm("Yakin ingin menghapus berita ini?")) return;
+
+      fetch(`http://localhost:3000/api/admin/news/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: "Bearer " + token }
+      }).then(() => location.reload());
+    }
+
+    function edit(id) {
+      const input = prompt("Masukkan format baru: Judul|Kategori_ID|Image|Konten");
+      if (!input) return;
+      const [title, category_id, image, content] = input.split("|");
+
+      fetch(`http://localhost:3000/api/admin/news/${id}`, {
+        method: "PUT",
+        headers: {
+          Authorization: "Bearer " + token,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ title, category_id, image, content })
+      }).then(() => location.reload());
+    }
+
+    document.getElementById("newsForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData();
+      formData.append("title", document.getElementById("title").value);
+      formData.append("category", document.getElementById("category").value);
+      formData.append("content", document.getElementById("content").value);
+      formData.append("image", document.getElementById("image").files[0]);
+
+      try {
+        const res = await fetch("http://localhost:3000/api/admin/news", {
+          method: "POST",
+          headers: { Authorization: "Bearer " + token },
+          body: formData
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          alert("✅ " + data.message);
+          window.location.reload();
+        } else {
+          alert("❌ Gagal: " + (data.error || "Terjadi kesalahan"));
+        }
+      } catch (err) {
+        alert("❌ Gagal koneksi server.");
+      }
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Semua Kategori</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    h2 { text-align: center; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+    .kategori {
+      background: #d00000;
+      color: white;
+      padding: 30px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 20px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .kategori:hover {
+      background: #a00000;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Semua Kategori</h2>
+  <div class="grid">
+    <div class="kategori" onclick="goTo('Politics')">Politics</div>
+    <div class="kategori" onclick="goTo('Sports')">Sports</div>
+    <div class="kategori" onclick="goTo('Health')">Health</div>
+    <div class="kategori" onclick="goTo('Investment')">Investment</div>
+    <div class="kategori" onclick="goTo('Games')">Games</div>
+    <div class="kategori" onclick="goTo('F&B')">F&B</div>
+  </div>
+
+  <script>
+    function goTo(cat) {
+      location.href = `kategori.html?cat=${encodeURIComponent(cat)}&page=1`;
+    }
+  </script>
+
+</body>
+</html>

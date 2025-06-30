@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Beranda - IDN News</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="top-row">
+    <a href="index.html" class="brand">IDN News</a>
+    <div class="auth-links">
+      <a href="login.html">Login</a>
+      <a href="register.html">Register</a>
+    </div>
+  </div>
+
+  <div class="scrolling-categories">
+    <a href="kategori.html?cat=Politics&page=1">Politics</a>
+    <a href="kategori.html?cat=Sports&page=1">Sports</a>
+    <a href="kategori.html?cat=Health&page=1">Health</a>
+    <a href="kategori.html?cat=Investment&page=1">Investment</a>
+    <a href="kategori.html?cat=Games&page=1">Games</a>
+    <a href="kategori.html?cat=F%26B&page=1">F&B</a>
+    <a href="kategori-list.html">Kategori</a>
+    <a href="trending.html">Trending</a>
+  </div>
+
+  <form class="search-row" action="search.html" method="GET">
+    <input type="text" name="q" placeholder="Cari berita..." required>
+    <button type="submit">Cari</button>
+  </form>
+</nav>
+
+<div class="container">
+  <!-- KIRI -->
+  <div class="berita-terbaru">
+    <div class="highlight-utama" id="highlight-utama">Memuat...</div>
+    <div id="kategori-container"></div>
+  </div>
+
+  <div class="trending">
+    <h3>Trending Hari Ini</h3>
+    <div id="trending-container">Memuat...</div>
+  </div>
+</div>
+
+<footer>
+  &copy; 2025 IDN News
+</footer>
+
+<script>
+  const BASE_API = "https://idn-backend.onrender.com";
+
+  async function loadHighlight() {
+    try {
+      const res = await fetch(`${BASE_API}/api/news/latest`);
+      const data = await res.json();
+      const utama = data[0];
+      const el = document.getElementById("highlight-utama");
+
+      el.innerHTML = `
+        <img src="${BASE_API}/images/${utama.image}" alt="${utama.title}">
+        <div class="overlay">
+          <h2><a href="detail.html?id=${utama.id}" style="color:white;">${utama.title}</a></h2>
+          <p>${utama.content.slice(0, 180)}...</p>
+        </div>
+      `;
+    } catch {
+      document.getElementById("highlight-utama").innerHTML = "<p>Gagal memuat berita utama.</p>";
+    }
+  }
+
+  async function loadTrending() {
+    try {
+      const res = await fetch(`${BASE_API}/api/news/trending`);
+      const data = await res.json();
+      const container = document.getElementById("trending-container");
+      container.innerHTML = "";
+
+      if (!Array.isArray(data) || data.length === 0) {
+        container.innerHTML = "<p>Tidak ada berita trending.</p>";
+        return;
+      }
+
+      data.forEach(n => {
+        const div = document.createElement("div");
+        div.className = "item";
+        div.innerHTML = `
+          <img src="${BASE_API}/images/${n.image}" alt="${n.title}">
+          <div><a href="detail.html?id=${n.id}" style="color: black;">${n.title.slice(0, 60)}...</a></div>
+        `;
+        container.appendChild(div);
+      });
+    } catch {
+      document.getElementById("trending-container").innerHTML = "<p>Gagal memuat trending.</p>";
+    }
+  }
+
+  async function loadKategoriBerita(kategori) {
+    try {
+      const res = await fetch(`${BASE_API}/api/news?category=${kategori}&page=1`);
+      const data = await res.json();
+      const container = document.getElementById("kategori-container");
+
+      const section = document.createElement("div");
+      section.className = "kategori-section";
+      section.innerHTML = `<h3><a href="kategori.html?cat=${kategori}&page=1">${kategori}</a></h3>`;
+
+      const grid = document.createElement("div");
+      grid.className = "kategori-grid";
+
+      data.slice(0, 3).forEach(berita => {
+        const tgl = new Date(berita.created_at).toLocaleDateString("id-ID", {
+          day: 'numeric', month: 'long', year: 'numeric'
+        });
+
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <img src="${BASE_API}/images/${berita.image}" alt="${berita.title}">
+          <a href="detail.html?id=${berita.id}">${berita.title.slice(0, 80)}</a>
+          <div class="date">${tgl}</div>
+        `;
+        grid.appendChild(card);
+      });
+
+      section.appendChild(grid);
+      container.appendChild(section);
+    } catch {
+      console.error("Gagal memuat berita kategori " + kategori);
+    }
+  }
+
+  loadHighlight();
+  loadTrending();
+  ["Politics", "Sports", "Health", "Investment", "Games", "F%26B"].forEach(loadKategoriBerita);
+</script>
+
+</body>
+</html>
