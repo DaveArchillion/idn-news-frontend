@@ -9,7 +9,6 @@
 <body>
 
   <nav class="navbar">
-    <!-- Baris 1: Logo + Login/Register -->
     <div class="top-row">
       <a href="index.html" class="brand">IDN News</a>
       <div class="auth-links">
@@ -24,7 +23,7 @@
       <a href="kategori.html?cat=Health&page=1">Health</a>
       <a href="kategori.html?cat=Investment&page=1">Investment</a>
       <a href="kategori.html?cat=Games&page=1">Games</a>
-      <a href="kategori.html?cat=F&B&page=1">F&B</a>
+      <a href="kategori.html?cat=F%26B&page=1">F&B</a>
       <a href="kategori-list.html">Kategori</a>
       <a href="trending.html">Trending</a>
     </div>
@@ -45,6 +44,7 @@
   </footer>
 
   <script>
+    const BASE_API = "https://059df06b-d75f-49f8-b3cb-d2e782aca1d7-00-4c1uiex5c96m.sisko.replit.dev";
     const params = new URLSearchParams(window.location.search);
     const userId = params.get("id");
 
@@ -53,7 +53,7 @@
       throw new Error("User ID diperlukan.");
     }
 
-    fetch(`http://localhost:3000/api/news/by-author/${userId}`)
+    fetch(`${BASE_API}/api/news/by-author/${userId}`)
       .then(res => res.json())
       .then(data => {
         const container = document.getElementById("list-berita");
@@ -75,7 +75,7 @@
           const card = document.createElement("div");
           card.className = "card";
           card.innerHTML = `
-            <img src="http://localhost:3000/images/${berita.image}" alt="${berita.title}">
+            <img src="${BASE_API}/images/${berita.image}" alt="${berita.title}">
             <h3><a href="detail.html?id=${berita.id}">${berita.title}</a></h3>
             <small>${tanggal} | <a href="kategori.html?cat=${encodeURIComponent(berita.category)}">${berita.category}</a></small>
             <p>${berita.content.slice(0, 100)}...</p>

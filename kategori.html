@@ -1,112 +1,66 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kategori - IDN News</title>
-  <link rel="stylesheet" href="assets/css/style.css">
-</head>
-<body>
+<script>
+  const BASE_API = "https://059df06b-d75f-49f8-b3cb-d2e782aca1d7-00-4c1uiex5c96m.sisko.replit.dev";
 
-  <nav class="navbar">
-    <div class="top-row">
-      <a href="index.html" class="brand">IDN News</a>
-      <div class="auth-links">
-        <a href="login.html">Login</a>
-        <a href="register.html">Register</a>
-      </div>
-    </div>
+  const params = new URLSearchParams(window.location.search);
+  const category = params.get("cat");
+  const page = parseInt(params.get("page")) || 1;
+  const limit = 6;
 
-    <div class="scrolling-categories">
-      <a href="kategori.html?cat=Politics&page=1">Politics</a>
-      <a href="kategori.html?cat=Sports&page=1">Sports</a>
-      <a href="kategori.html?cat=Health&page=1">Health</a>
-      <a href="kategori.html?cat=Investment&page=1">Investment</a>
-      <a href="kategori.html?cat=Games&page=1">Games</a>
-      <a href="kategori.html?cat=F%26B&page=1">F&B</a>
-      <a href="kategori-list.html">Kategori</a>
-      <a href="trending.html">Trending</a>
-    </div>
+  if (!category) {
+    document.getElementById("list-berita").innerHTML = "<p style='padding:20px;'>Kategori tidak ditemukan.</p>";
+    throw new Error("Kategori tidak ditentukan.");
+  }
 
-    <form class="search-row" action="search.html" method="GET">
-      <input type="text" name="q" placeholder="Cari berita..." required>
-      <button type="submit">Cari</button>
-    </form>
-  </nav>
+  document.getElementById("judul-kategori").innerText = `Kategori: ${decodeURIComponent(category)}`;
 
-  <section style="padding: 20px;">
-    <h2 id="judul-kategori">Kategori: ...</h2>
-    <div id="list-berita" class="grid-container">Memuat...</div>
-    <div id="pagination" class="pagination"></div>
-  </section>
+  fetch(`${BASE_API}/api/news/count?category=${encodeURIComponent(category)}`)
+    .then(res => res.json())
+    .then(({ total }) => {
+      const totalPages = Math.ceil(total / limit);
 
-  <footer>
-    &copy; 2025 IDN News
-  </footer>
+      fetch(`${BASE_API}/api/news?category=${encodeURIComponent(category)}&page=${page}`)
+        .then(res => res.json())
+        .then(data => {
+          const container = document.getElementById("list-berita");
+          container.innerHTML = "";
 
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const category = params.get("cat");
-    const page = parseInt(params.get("page")) || 1;
-    const limit = 6;
+          if (data.length === 0) {
+            container.innerHTML = "<p style='padding:20px;'>Belum ada berita di kategori ini.</p>";
+            return;
+          }
 
-    if (!category) {
-      document.getElementById("list-berita").innerHTML = "<p style='padding:20px;'>Kategori tidak ditemukan.</p>";
-      throw new Error("Kategori tidak ditentukan.");
-    }
-
-    document.getElementById("judul-kategori").innerText = `Kategori: ${decodeURIComponent(category)}`;
-
-    fetch(`http://localhost:3000/api/news/count?category=${encodeURIComponent(category)}`)
-      .then(res => res.json())
-      .then(({ total }) => {
-        const totalPages = Math.ceil(total / limit);
-
-        fetch(`http://localhost:3000/api/news?category=${encodeURIComponent(category)}&page=${page}`)
-          .then(res => res.json())
-          .then(data => {
-            const container = document.getElementById("list-berita");
-            container.innerHTML = "";
-
-            if (data.length === 0) {
-              container.innerHTML = "<p style='padding:20px;'>Belum ada berita di kategori ini.</p>";
-              return;
-            }
-
-            data.forEach(berita => {
-              const tanggal = new Date(berita.created_at).toLocaleDateString("id-ID", {
-                day: "numeric", month: "long", year: "numeric"
-              });
-
-              const card = document.createElement("div");
-              card.className = "card";
-              card.innerHTML = `
-                <img src="http://localhost:3000/images/${berita.image}" alt="${berita.title}">
-                <h3><a href="detail.html?id=${berita.id}">${berita.title}</a></h3>
-                <small>${tanggal}</small>
-                <p>${berita.content.slice(0, 100)}...</p>
-              `;
-              container.appendChild(card);
+          data.forEach(berita => {
+            const tanggal = new Date(berita.created_at).toLocaleDateString("id-ID", {
+              day: "numeric", month: "long", year: "numeric"
             });
 
-            const pagination = document.getElementById("pagination");
-            pagination.innerHTML = "";
-            for (let i = 1; i <= totalPages; i++) {
-              const link = document.createElement("a");
-              link.href = `kategori.html?cat=${encodeURIComponent(category)}&page=${i}`;
-              link.className = "page-link";
-              link.innerText = i;
-              if (i === page) link.classList.add("active");
-              pagination.appendChild(link);
-            }
-          })
-          .catch(() => {
-            document.getElementById("list-berita").innerHTML = "<p style='padding:20px;'>Gagal memuat berita.</p>";
+            const card = document.createElement("div");
+            card.className = "card";
+            card.innerHTML = `
+              <img src="${BASE_API}/images/${berita.image}" alt="${berita.title}">
+              <h3><a href="detail.html?id=${berita.id}">${berita.title}</a></h3>
+              <small>${tanggal}</small>
+              <p>${berita.content.slice(0, 100)}...</p>
+            `;
+            container.appendChild(card);
           });
-      })
-      .catch(() => {
-        document.getElementById("list-berita").innerHTML = "<p style='padding:20px;'>Gagal memuat jumlah berita.</p>";
-      });
-  </script>
-</body>
-</html>
+
+          const pagination = document.getElementById("pagination");
+          pagination.innerHTML = "";
+          for (let i = 1; i <= totalPages; i++) {
+            const link = document.createElement("a");
+            link.href = `kategori.html?cat=${encodeURIComponent(category)}&page=${i}`;
+            link.className = "page-link";
+            link.innerText = i;
+            if (i === page) link.classList.add("active");
+            pagination.appendChild(link);
+          }
+        })
+        .catch(() => {
+          document.getElementById("list-berita").innerHTML = "<p style='padding:20px;'>Gagal memuat berita.</p>";
+        });
+    })
+    .catch(() => {
+      document.getElementById("list-berita").innerHTML = "<p style='padding:20px;'>Gagal memuat jumlah berita.</p>";
+    });
+</script>

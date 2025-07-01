@@ -1,58 +1,5 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Beranda - IDN News</title>
-  <link rel="stylesheet" href="assets/css/style.css">
-</head>
-<body>
-
-<nav class="navbar">
-  <div class="top-row">
-    <a href="index.html" class="brand">IDN News</a>
-    <div class="auth-links">
-      <a href="login.html">Login</a>
-      <a href="register.html">Register</a>
-    </div>
-  </div>
-
-  <div class="scrolling-categories">
-    <a href="kategori.html?cat=Politics&page=1">Politics</a>
-    <a href="kategori.html?cat=Sports&page=1">Sports</a>
-    <a href="kategori.html?cat=Health&page=1">Health</a>
-    <a href="kategori.html?cat=Investment&page=1">Investment</a>
-    <a href="kategori.html?cat=Games&page=1">Games</a>
-    <a href="kategori.html?cat=F%26B&page=1">F&B</a>
-    <a href="kategori-list.html">Kategori</a>
-    <a href="trending.html">Trending</a>
-  </div>
-
-  <form class="search-row" action="search.html" method="GET">
-    <input type="text" name="q" placeholder="Cari berita..." required>
-    <button type="submit">Cari</button>
-  </form>
-</nav>
-
-<div class="container">
-  <!-- KIRI -->
-  <div class="berita-terbaru">
-    <div class="highlight-utama" id="highlight-utama">Memuat...</div>
-    <div id="kategori-container"></div>
-  </div>
-
-  <div class="trending">
-    <h3>Trending Hari Ini</h3>
-    <div id="trending-container">Memuat...</div>
-  </div>
-</div>
-
-<footer>
-  &copy; 2025 IDN News
-</footer>
-
 <script>
-  const BASE_API = "https://idn-backend.onrender.com";
+  const BASE_API = "https://059df06b-d75f-49f8-b3cb-d2e782aca1d7-00-4c1uiex5c96m.sisko.replit.dev";
 
   async function loadHighlight() {
     try {
@@ -138,6 +85,3 @@
   loadTrending();
   ["Politics", "Sports", "Health", "Investment", "Games", "F%26B"].forEach(loadKategoriBerita);
 </script>
-
-</body>
-</html>

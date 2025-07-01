@@ -1,88 +1,42 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <title>Upload Berita</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    form input, form textarea, form select {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-    }
-    button {
-      padding: 10px 20px;
-      background: #d00000;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #a00000;
-    }
-  </style>
-</head>
-<body>
+<script>
+  const BASE_API = "https://059df06b-d75f-49f8-b3cb-d2e782aca1d7-00-4c1uiex5c96m.sisko.replit.dev";
+  const token = localStorage.getItem("token");
+  
+  if (!token) {
+    alert("Anda belum login!");
+    location.href = "login.html";
+  }
 
-  <button onclick="logout()" style="float:right;">Logout</button>
-  <h2>Upload Berita Baru</h2>
+  function logout() {
+    localStorage.removeItem("token");
+    alert("Berhasil logout.");
+    window.location.href = "login.html";
+  }
 
-  <form id="form-upload" enctype="multipart/form-data">
-    <input type="text" id="title" placeholder="Judul Berita" required>
-    <select id="category" required>
-      <option value="">Pilih Kategori</option>
-      <option value="1">Politics</option>
-      <option value="2">Sports</option>
-      <option value="3">Health</option>
-      <option value="4">Investment</option>
-      <option value="5">Games</option>
-      <option value="6">F&B</option>
-    </select>
-    <textarea id="content" placeholder="Isi berita..." required></textarea>
-    <input type="file" id="image" required>
-    <button type="submit">Upload</button>
-  </form>
+  document.getElementById("form-upload").addEventListener("submit", function(e) {
+    e.preventDefault();
 
-  <script>
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert("Anda belum login!");
-      location.href = "login.html";
-    }
+    const formData = new FormData();
+    formData.append("title", document.getElementById("title").value);
+    formData.append("content", document.getElementById("content").value);
+    formData.append("category_id", document.getElementById("category").value);
+    formData.append("image", document.getElementById("image").files[0]);
 
-    function logout() {
-      localStorage.removeItem("token");
-      alert("Berhasil logout.");
-      window.location.href = "login.html";
-    }
-
-    document.getElementById("form-upload").addEventListener("submit", function(e) {
-      e.preventDefault();
-
-      const formData = new FormData();
-      formData.append("title", document.getElementById("title").value);
-      formData.append("content", document.getElementById("content").value);
-      formData.append("category_id", document.getElementById("category").value);
-      formData.append("image", document.getElementById("image").files[0]);
-
-      fetch("http://localhost:3000/api/upload", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-        body: formData
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          alert("Berita berhasil diupload!");
-          location.reload();
-        } else {
-          alert("Gagal upload: " + (data.error || "Unknown error"));
-        }
-      });
+    fetch(`${BASE_API}/api/upload`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        alert("Berita berhasil diupload!");
+        location.reload();
+      } else {
+        alert("Gagal upload: " + (data.error || "Unknown error"));
+      }
     });
-  </script>
-
-</body>
-</html>
+  });
+</script>

@@ -9,7 +9,6 @@
 <body>
 
   <nav class="navbar">
-    <!-- Baris 1 -->
     <div class="top-row">
       <a href="index.html" class="brand">IDN News</a>
       <div class="auth-links">
@@ -46,9 +45,10 @@
   </footer>
 
   <script>
+    const BASE_API = "https://059df06b-d75f-49f8-b3cb-d2e782aca1d7-00-4c1uiex5c96m.sisko.replit.dev";
     const keyword = new URLSearchParams(window.location.search).get("q");
 
-    fetch(`http://localhost:3000/api/news/search?q=${keyword}`)
+    fetch(`${BASE_API}/api/news/search?q=${encodeURIComponent(keyword)}`)
       .then(res => res.json())
       .then(data => {
         const container = document.getElementById("hasil-pencarian");
@@ -68,7 +68,7 @@
           const card = document.createElement("div");
           card.className = "card";
           card.innerHTML = `
-            <img src="http://localhost:3000/images/${item.image}" alt="${item.title}">
+            <img src="${BASE_API}/images/${item.image}" alt="${item.title}">
             <h3><a href="detail.html?id=${item.id}">${item.title}</a></h3>
             <small>${tanggal}</small>
             <p>${item.content.slice(0, 100)}...</p>

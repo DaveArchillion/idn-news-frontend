@@ -1,79 +1,35 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Trending Berita - IDN News</title>
-  <link rel="stylesheet" href="assets/css/style.css" />
-</head>
-<body>
+<script>
+  const BASE_API = "https://059df06b-d75f-49f8-b3cb-d2e782aca1d7-00-4c1uiex5c96m.sisko.replit.dev";
 
-  <nav class="navbar">
-    <div class="top-row">
-      <a href="index.html" class="brand">IDN News</a>
-      <div class="auth-links">
-        <a href="login.html">Login</a>
-        <a href="register.html">Register</a>
-      </div>
-    </div>
+  fetch(`${BASE_API}/api/news/trending`)
+    .then(res => res.json())
+    .then(data => {
+      const container = document.getElementById("berita-trending");
 
-    <div class="scrolling-categories">
-      <a href="kategori.html?cat=Politics&page=1">Politics</a>
-      <a href="kategori.html?cat=Sports&page=1">Sports</a>
-      <a href="kategori.html?cat=Health&page=1">Health</a>
-      <a href="kategori.html?cat=Investment&page=1">Investment</a>
-      <a href="kategori.html?cat=Games&page=1">Games</a>
-      <a href="kategori.html?cat=F%26B&page=1">F&B</a>
-      <a href="kategori-list.html">Kategori</a>
-      <a href="trending.html" style="text-decoration:underline;">Trending</a>
-    </div>
+      if (!Array.isArray(data)) {
+        container.innerHTML = "<p style='padding:20px;'>Gagal memuat data.</p>";
+        return;
+      }
 
-    <form class="search-row" action="search.html" method="GET">
-      <input type="text" name="q" placeholder="Cari berita..." required>
-      <button type="submit">Cari</button>
-    </form>
-  </nav>
+      container.innerHTML = "";
 
-  <h2 style="padding: 20px;">Trending Hari Ini</h2>
-  <div class="grid-container" id="berita-trending">Memuat...</div>
-
-  <footer>
-    &copy; 2025 IDN News
-  </footer>
-
-  <script>
-    fetch("http://localhost:3000/api/news/trending")
-      .then(res => res.json())
-      .then(data => {
-        const container = document.getElementById("berita-trending");
-
-        if (!Array.isArray(data)) {
-          container.innerHTML = "<p style='padding:20px;'>Gagal memuat data.</p>";
-          return;
-        }
-
-        container.innerHTML = "";
-
-        data.forEach(item => {
-          const tanggal = new Date(item.created_at).toLocaleDateString("id-ID", {
-            day: "numeric", month: "long", year: "numeric"
-          });
-
-          const card = document.createElement("div");
-          card.className = "card";
-          card.innerHTML = `
-            <img src="http://localhost:3000/images/${item.image}" alt="${item.title}">
-            <h3><a href="detail.html?id=${item.id}">${item.title}</a></h3>
-            <small>${tanggal}</small>
-            <p>${item.content.slice(0, 100)}...</p>
-          `;
-          container.appendChild(card);
+      data.forEach(item => {
+        const tanggal = new Date(item.created_at).toLocaleDateString("id-ID", {
+          day: "numeric", month: "long", year: "numeric"
         });
-      })
-      .catch(() => {
-        document.getElementById("berita-trending").innerHTML = "<p style='padding:20px;'>Gagal memuat trending.</p>";
-      });
-  </script>
 
-</body>
-</html>
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <img src="${BASE_API}/images/${item.image}" alt="${item.title}">
+          <h3><a href="detail.html?id=${item.id}">${item.title}</a></h3>
+          <small>${tanggal}</small>
+          <p>${item.content.slice(0, 100)}...</p>
+        `;
+        container.appendChild(card);
+      });
+    })
+    .catch(() => {
+      document.getElementById("berita-trending").innerHTML = "<p style='padding:20px;'>Gagal memuat trending.</p>";
+    });
+</script>
